@@ -1,0 +1,32 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="coffee_order.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="ko">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>커피 주문</title>
+
+
+    <link href="~/coffee.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" href="~/css/index.css" />
+</head>
+<body>
+    <div class="top-bar">
+        <span>커피 주문</span>
+    </div>
+    <div class = "middle">
+        <form runat="server">
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+
+    </form>
+    </div>
+    
+    <div class="bottom-bar">
+        <span>커피 주문</span>
+    </div>
+</body>
+</html>
