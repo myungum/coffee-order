@@ -81,22 +81,38 @@ body {
     border-radius: 10px;
 }
 
+.coffee-option-add {
+    font-size: 1.5em;
+    width: 100%;
+    text-align: center;
+}
+
 .coffee-option-list {
     list-style-type: none;
 }
 
 .coffee-option-list > li {
-    display:flex;
-    padding: 10px;
+    display:table;
+    margin: 10px;
+    
+}
+
+.coffee-option-list > li > span {
+    font-size: 1.5em;
+    width: 4em;
+    display:table-cell;
+    vertical-align:middle;
 }
 
 /* 여기서 부터 외부 소스 */
 /* radio button : https://codepen.io/JiveDig/pen/jbdJXR*/
 .switch-field {
 	display: flex;
-	margin-bottom: 36px;
-	overflow: hidden;
+    margin: 10px;
+    width: 100%;
 }
+
+
 
 .switch-field input {
 	position: absolute !important;
