@@ -36,17 +36,12 @@ namespace coffee_order
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public static string RequestData(string cmd, string data)
+        public static string GetData(string cmd)
         {
-
             switch (cmd)
             {
                 case "get_coffees":
                     return GetSuccessString(coffees);
-                case "add_order":
-                    JObject json = JObject.Parse(data);
-                    jarr.Add(json["data"]);
-                    return GetSuccessString(null);
                 case "get_order":
                     return GetSuccessString(jarr);
                 default:
@@ -54,7 +49,23 @@ namespace coffee_order
             }
         }
 
-        public static string GetSuccessString(JContainer data)
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public static string SetData(string cmd, string data)
+        {
+
+            switch (cmd)
+            {
+                case "add_order":
+                    JObject json = JObject.Parse(data);
+                    jarr.Add(json["data"]);
+                    return GetSuccessString("add order success");
+                default:
+                    return GetFailString("unknown cmd");
+            }
+        }
+
+        public static string GetSuccessString(JToken data)
         {
             JObject json = new JObject();
             json["result"] = "success";
