@@ -42,7 +42,7 @@ namespace coffee_order
             {
                 case "get_coffees":
                     return GetSuccessString(coffees);
-                case "get_order":
+                case "get_orders":
                     return GetSuccessString(jarr);
                 default:
                     return GetFailString("unknown cmd");
@@ -58,7 +58,7 @@ namespace coffee_order
             {
                 case "add_order":
                     JObject json = JObject.Parse(data);
-                    jarr.Add(json["data"]);
+                    jarr.Add(json);
                     return GetSuccessString("add order success");
                 default:
                     return GetFailString("unknown cmd");

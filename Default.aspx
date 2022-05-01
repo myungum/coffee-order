@@ -1,10 +1,18 @@
 ﻿<%@ Page Title="커피 주문 메인" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="coffee_order._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <!-- 커피 리스트 -->
-    <div class="coffee-list">
-        
+    <div class="split">
+        <!-- 커피 리스트 -->
+        <div class="coffee-list" id="coffee-list"> 
 
+        </div>
+
+
+
+        <!--주문 리스트-->
+        <ul id="coffee-orders" class="list-group">
+
+        </ul>
     </div>
 
     <!--커피 템플릿-->
@@ -49,6 +57,8 @@
         var coffee_dic = {};
         var coffee_option = $('.coffee-option');
         var coffee_current = null;
+        var coffee_orders = null;
+        var split = null;
 
         // radio 버튼 동적 생성
         function make_radio_button(option_name, opt_list) {
@@ -96,7 +106,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 url: '<%= ResolveUrl("Default.aspx/SetData") %>',
-                data: JSON.stringify({cmd:cmd, data:JSON.stringify(data)}),
+                data: JSON.stringify({cmd:cmd, data:data}),
                 async: false,
                 success: success,
                 error: function (response) {
@@ -144,7 +154,18 @@
         
         // 커피 주문 목록 받아오기
         function get_orders() {
+            var success = function(response) {
+                
+                var li = '';
+                var orders = JSON.parse(response.d)['data'];
+                $.each(orders, function(index, value) {
+                    li += '<li class="list-group-item">' + JSON.stringify(value) + '</li>'
+                });
+                $('#coffee-orders').html(li);
 
+                coffee_orders = Sortable.create(document.getElementById('coffee-orders'), {
+                    });
+            }
             get_data('get_orders', success);
         }
 
@@ -158,17 +179,23 @@
             $.each(options, function(index, value) {
                 coffee['옵션'][value] = $("input[name='" + value + "']:checked").val()
             });
+            delete coffee['이미지'];
 
             var success = function (response) {
-                alert(JSON.parse(response.d)['data']);
+                get_orders();
             }
 
-            set_data('add_order', coffee, success)
+            set_data('add_order', JSON.stringify(coffee), success)
         }
 
         // 문서 준비 완료
         $(document).ready(function() {
+            split = Split(['#coffee-list', '#coffee-orders'], {
+                minSize: 220,
+            });
+
             get_coffees();
+            get_orders();
             // 팝업 닫기
             $(document).mouseup(function (e){
                 if(coffee_option.has(e.target).length==0) {
