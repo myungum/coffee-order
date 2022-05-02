@@ -158,12 +158,16 @@
                 
                 var li = '';
                 var orders = JSON.parse(response.d)['data'];
-                $.each(orders, function(index, value) {
-                    li += '<li class="list-group-item">' + JSON.stringify(value) + '</li>'
+                $.each(orders, function(key, value) {
+                    li += '<li class="list-group-item" name="' + key + '">' + 
+                        '<details><summary>' + value["이름"] + '</summary><p>' + JSON.stringify(value["옵션"]) + '</p></details><input type="button" class="list-group-item-button" value="X"/></li>'
                 });
                 $('#coffee-orders').html(li);
-
+                $('.list-group-item-button').click(function(){
+                    remove_order($(this).parent().attr('name'));
+                });
                 coffee_orders = Sortable.create(document.getElementById('coffee-orders'), {
+                    sort : false,
                     });
             }
             get_data('get_orders', success);
@@ -186,6 +190,14 @@
             }
 
             set_data('add_order', JSON.stringify(coffee), success)
+        }
+
+        // 커피 주문 취소하기
+        function remove_order(id) {
+            var success = function (response) {
+                get_orders();
+            }
+            set_data('remove_order', id, success);
         }
 
         // 문서 준비 완료

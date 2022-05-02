@@ -14,8 +14,9 @@ namespace coffee_order
 {
     public partial class _Default : Page
     {
-        private static JArray jarr = new JArray();
+        private static JObject orders = new JObject();
         private static JObject coffees = GetCoffees();
+        private static int id = 1;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -43,7 +44,7 @@ namespace coffee_order
                 case "get_coffees":
                     return GetSuccessString(coffees);
                 case "get_orders":
-                    return GetSuccessString(jarr);
+                    return GetSuccessString(orders);
                 default:
                     return GetFailString("unknown cmd");
             }
@@ -58,8 +59,19 @@ namespace coffee_order
             {
                 case "add_order":
                     JObject json = JObject.Parse(data);
-                    jarr.Add(json);
+                    json["id"] = id++;
+                    orders[json["id"].ToString()] = json;
                     return GetSuccessString("add order success");
+                case "remove_order":
+                    if (orders.ContainsKey(data))
+                    {
+                        orders.Remove(data);
+                        return GetSuccessString("remove order success");
+                    }
+                    else
+                    {
+                        return GetFailString("unknown order id");
+                    }
                 default:
                     return GetFailString("unknown cmd");
             }

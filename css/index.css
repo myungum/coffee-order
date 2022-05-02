@@ -104,6 +104,10 @@ body {
     vertical-align:middle;
 }
 
+.list-group-item-button {
+    padding: 5px;
+}
+
 /* 여기서 부터 외부 소스 */
 /* radio button : https://codepen.io/JiveDig/pen/jbdJXR*/
 .switch-field {
