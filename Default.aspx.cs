@@ -20,7 +20,7 @@ namespace coffee_order
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         private static JObject GetCoffees()
@@ -45,6 +45,8 @@ namespace coffee_order
                     return GetSuccessString(coffees);
                 case "get_orders":
                     return GetSuccessString(orders);
+                case "get_name":
+                    return GetSuccessString((string)(HttpContext.Current.Session["name"] ?? string.Empty));
                 default:
                     return GetFailString("unknown cmd");
             }
@@ -58,20 +60,25 @@ namespace coffee_order
             switch (cmd)
             {
                 case "add_order":
-                    JObject json = JObject.Parse(data);
-                    json["id"] = id++;
-                    orders[json["id"].ToString()] = json;
-                    return GetSuccessString("add order success");
+                    if (HttpContext.Current.Session["name"] != null)
+                    {
+                        JObject json = JObject.Parse(data);
+                        json["id"] = id++;
+                        json["주문자"] = (string)HttpContext.Current.Session["name"];
+                        orders[json["id"].ToString()] = json;
+                        return GetSuccessString("add order success");
+                    }
+                    return GetFailString("unknown user");
                 case "remove_order":
                     if (orders.ContainsKey(data))
                     {
                         orders.Remove(data);
                         return GetSuccessString("remove order success");
                     }
-                    else
-                    {
-                        return GetFailString("unknown order id");
-                    }
+                    return GetFailString("unknown order id");
+                case "set_name":
+                    HttpContext.Current.Session["name"] = data;
+                    return GetSuccessString("set name success");
                 default:
                     return GetFailString("unknown cmd");
             }

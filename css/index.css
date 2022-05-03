@@ -104,9 +104,18 @@ body {
     vertical-align:middle;
 }
 
-.list-group-item-button {
+.list-group-item > input {
     padding: 5px;
 }
+
+.list-group-item > details > p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 5px;
+}
+
+
 
 /* 여기서 부터 외부 소스 */
 /* radio button : https://codepen.io/JiveDig/pen/jbdJXR*/

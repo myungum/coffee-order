@@ -92,7 +92,15 @@
                 url: '<%= ResolveUrl("Default.aspx/GetData") %>',
                 data: JSON.stringify({cmd:cmd}),
                 async: false,
-                success: success,
+                success: function (response) {
+                    var data = JSON.parse(response.d);
+                    if (data['result'] == 'success') {
+                        success(data['data']);
+                    }
+                    else {
+                        alert('error : ' + data['data']);
+                    }
+                },
                 error: function (response) {
                     alert('error');
                 },
@@ -108,7 +116,15 @@
                 url: '<%= ResolveUrl("Default.aspx/SetData") %>',
                 data: JSON.stringify({cmd:cmd, data:data}),
                 async: false,
-                success: success,
+                success: function (response) {
+                    var data = JSON.parse(response.d);
+                    if (data['result'] == 'success') {
+                        success(data['data']);
+                    }
+                    else {
+                        alert('error : ' + data['data']);
+                    }
+                },
                 error: function (response) {
                     alert('error');
                 },
@@ -118,11 +134,11 @@
 
         // 커피 목록 받아오기
         function get_coffees() {
-            var success = function (response) {
+            var success = function (data) {
                     // 커피 목록 비우기
                     $('.coffee-list').html('');
 
-                    coffee_dic = JSON.parse(response.d)['data'];
+                    coffee_dic = data;
                     // 커피 목록 갱신하기
                     $.each(coffee_dic, function(coffee_name, coffee) {
                         var html = $('#coffee-template').clone();
@@ -154,13 +170,13 @@
         
         // 커피 주문 목록 받아오기
         function get_orders() {
-            var success = function(response) {
+            var success = function(data) {
                 
                 var li = '';
-                var orders = JSON.parse(response.d)['data'];
+                var orders = data;
                 $.each(orders, function(key, value) {
                     li += '<li class="list-group-item" name="' + key + '">' + 
-                        '<details><summary>' + value["이름"] + '</summary><p>' + JSON.stringify(value["옵션"]) + '</p></details><input type="button" class="list-group-item-button" value="X"/></li>'
+                        '<details><summary>' + value["이름"] + '(' + value['주문자'] + ')</summary><p>' + JSON.stringify(value['옵션']) + '</p></details><input type="button" class="list-group-item-button" value="X"/></li>'
                 });
                 $('#coffee-orders').html(li);
                 $('.list-group-item-button').click(function(){
@@ -185,7 +201,7 @@
             });
             delete coffee['이미지'];
 
-            var success = function (response) {
+            var success = function () {
                 get_orders();
             }
 
@@ -194,7 +210,7 @@
 
         // 커피 주문 취소하기
         function remove_order(id) {
-            var success = function (response) {
+            var success = function () {
                 get_orders();
             }
             set_data('remove_order', id, success);
@@ -202,24 +218,43 @@
 
         // 문서 준비 완료
         $(document).ready(function() {
-            split = Split(['#coffee-list', '#coffee-orders'], {
-                minSize: 220,
-            });
+            /* 이름 확인하기 */
+            get_data("get_name", function (data) {
+                // 이름 없는 경우
+                if (data == "") {
+                    var name = prompt('사용자 이름을 입력해주세요', '이름');
+                    if (name != null && name != "") {
+                        set_data("set_name", name, function(data) {
+                            alert(data);
+                            location.reload();
+                        });
+                    }
+                    else {
+                        alert("주문을 위해서 반드시 이름이 필요합니다.");
+                        location.reload();
+                    }
+                }
+                else {
+                    split = Split(['#coffee-list', '#coffee-orders'], {
+                        minSize: 240,
+                    });
 
-            get_coffees();
-            get_orders();
-            // 팝업 닫기
-            $(document).mouseup(function (e){
-                if(coffee_option.has(e.target).length==0) {
-                    popup_close(); 
-                } 
-            });
+                    get_coffees();
+                    get_orders();
+                    // 팝업 닫기
+                    $(document).mouseup(function (e){
+                        if(coffee_option.has(e.target).length==0) {
+                            popup_close(); 
+                        } 
+                    });
 
-            // 커피 추가하기
-            $('.coffee-option-add').click(function() {
-                add_order();
-                popup_close(); 
-            });
+                    // 커피 추가하기
+                    $('.coffee-option-add').click(function() {
+                        add_order();
+                        popup_close(); 
+                    });
+                }
+            });    
         });
     </script>
 </asp:Content>
