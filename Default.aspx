@@ -175,11 +175,14 @@
                 var li = '';
                 var orders = data;
                 $.each(orders, function(key, value) {
-                    li += '<li class="list-group-item" name="' + key + '">' + 
-                        '<details><summary>' + value["이름"] + '(' + value['주문자'] + ')</summary><p>' + JSON.stringify(value['옵션']) + '</p></details><input type="button" class="list-group-item-button" value="X"/></li>'
+                    li += '<li class="list-group-item" name="' + key + '"><div class="list-group-item-container">' + 
+                        '<img class="list-group-item-img" src="' + value['이미지'] +'"/>' +
+                        '<div class="list-group-item-overlay"><p class="list-group-item-overlay-text">삭제</p></div></div>' +
+                        '<details><summary>' + value["이름"] + '(' + value['주문자'] + ')</summary>' + 
+                            '<p class="list-group-item-option">' + JSON.stringify(value['옵션']) + '</p></details></li>'
                 });
                 $('#coffee-orders').html(li);
-                $('.list-group-item-button').click(function(){
+                $('.list-group-item-container').click(function(){
                     remove_order($(this).parent().attr('name'));
                 });
                 coffee_orders = Sortable.create(document.getElementById('coffee-orders'), {
@@ -199,7 +202,6 @@
             $.each(options, function(index, value) {
                 coffee['옵션'][value] = $("input[name='" + value + "']:checked").val()
             });
-            delete coffee['이미지'];
 
             var success = function () {
                 get_orders();

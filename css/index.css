@@ -104,17 +104,60 @@ body {
     vertical-align:middle;
 }
 
-.list-group-item > input {
-    padding: 5px;
+.list-group-item {
+    height: auto;
 }
 
-.list-group-item > details > p {
+.list-group-item-container {
+    width: 128px;
+    height: 128px;
+    position: relative;
+}
+
+.list-group-item-option {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding: 5px;
 }
 
+.list-group-item-img {
+    height:100%;
+    opacity: 1;
+    display: block;
+    backface-visibility: hidden;
+}
+
+.list-group-item-container:hover .list-group-item-overlay {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.list-group-item-overlay {
+    background-color: rgba(255, 0, 0, 0.5);
+    transition: .3s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.list-group-item-overlay-text {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2em;
+}
+
+
+.list-group-item > details {
+    width: auto;
+}
 
 
 /* 여기서 부터 외부 소스 */
