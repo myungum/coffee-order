@@ -1,58 +1,83 @@
-﻿<%@ Page Title="커피 주문 메인" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="coffee_order._Default" %>
+<!DOCTYPE html>
 
-<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="split">
-        <!-- 커피 리스트 -->
-        <div class="coffee-list" id="coffee-list"> 
+<html lang="ko">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>커피 주문</title>
+    <link href="{{ url_for('static', filename='coffee.ico') }}" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
-        </div>
-
-
-
-        <!--주문 리스트-->
-        <ul id="coffee-orders" class="list-group">
-
-        </ul>
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://SortableJS.github.io/Sortable/Sortable.js"></script>
+    <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="top-bar">
+        <span>커피 주문</span>
     </div>
+    <div class = "middle">
+        <div class="split">
+            <!-- 커피 리스트 -->
+            <div class="coffee-list" id="coffee-list"> 
 
-    <!--커피 템플릿-->
-    <div class="coffee" id="coffee-template" style="display:none">
-        <div class="coffee-box">
-            <img src="" />
-        </div>
-        <span>커피 이름</span>
-    </div>
-
-    <!-- 커피 옵션 선택 창-->
-    <div class="coffee-option">
-        <div class="coffee-option-box">
-            <div class="coffee-option-top">
-                <img class="coffee-option-img" src=""/>
             </div>
-            <ul class="coffee-option-list">
-                <li>
-                    <span>종류</span>
-                    <div class="switch-field" id="타입">
-                        
-                    </div>
-                </li>
-                <li>
-                    <span>사이즈</span>
-                    <div class="switch-field" id="사이즈">
-                        
-                    </div>
-                </li>
-                <li>
-                    <span>샷 추가</span>
-                    <div class="switch-field" id="샷추가">
 
-                    </div>
-                </li>
+            <!--주문 리스트-->
+            <ul id="coffee-orders" class="list-group">
+
             </ul>
-            <input type="button" class="coffee-option-add" value="담기"/>
+        </div>
+
+        <!--커피 템플릿-->
+        <div class="coffee" id="coffee-template" style="display:none">
+            <div class="coffee-box">
+                <img src="" />
+            </div>
+            <span>커피 이름</span>
+        </div>
+
+        <!-- 커피 옵션 선택 창-->
+        <div class="coffee-option">
+            <div class="coffee-option-box">
+                <div class="coffee-option-top">
+                    <img class="coffee-option-img" src=""/>
+                </div>
+                <ul class="coffee-option-list">
+                    <li>
+                        <span>종류</span>
+                        <div class="switch-field" id="타입">
+                            
+                        </div>
+                    </li>
+                    <li>
+                        <span>사이즈</span>
+                        <div class="switch-field" id="사이즈">
+                            
+                        </div>
+                    </li>
+                    <li>
+                        <span>샷 추가</span>
+                        <div class="switch-field" id="샷추가">
+
+                        </div>
+                    </li>
+                </ul>
+                <input type="button" class="coffee-option-add" value="담기"/>
+            </div>
         </div>
     </div>
-
+    
+    <div class="bottom-bar">
+        <span>커피 주문</span>
+    </div>
+    
     <script>
         var coffee_dic = {};
         var coffee_option = $('.coffee-option');
@@ -89,16 +114,15 @@
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                url: '<%= ResolveUrl("Default.aspx/GetData") %>',
+                url: '{{url_for("get_data")}}',
                 data: JSON.stringify({cmd:cmd}),
                 async: false,
                 success: function (response) {
-                    var data = JSON.parse(response.d);
-                    if (data['result'] == 'success') {
-                        success(data['data']);
+                    if (response['result'] == 'success') {
+                        success(response['data']);
                     }
                     else {
-                        alert('error : ' + data['data']);
+                        alert('error : ' + response['data']);
                     }
                 },
                 error: function (response) {
@@ -113,16 +137,15 @@
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                url: '<%= ResolveUrl("Default.aspx/SetData") %>',
+                url: '{{url_for("set_data")}}',
                 data: JSON.stringify({cmd:cmd, data:data}),
                 async: false,
                 success: function (response) {
-                    var data = JSON.parse(response.d);
-                    if (data['result'] == 'success') {
-                        success(data['data']);
+                    if (response['result'] == 'success') {
+                        success(response['data']);
                     }
                     else {
-                        alert('error : ' + data['data']);
+                        alert('error : ' + response['data']);
                     }
                 },
                 error: function (response) {
@@ -145,7 +168,7 @@
                         html.attr('id', coffee['이름']);
                         html.css('display', 'block');
                         html.children('span').text(coffee['이름']);
-                        html.children('.coffee-box').children('img').attr('src', coffee['이미지']);
+                        html.children('.coffee-box').children('img').attr('src', '/static/' + coffee["이미지"]);
                         $('.coffee-list').append(html);
                     });
 
@@ -154,7 +177,7 @@
                         popup_open();
 
                         var coffee = coffee_dic[$(this).parent().attr('id')];
-                        $('.coffee-option-img').attr('src', coffee['이미지']);
+                        $('.coffee-option-img').attr('src', '/static/' + coffee["이미지"]);
                         
                         // 옵션 설정하기
                         $.each(coffee['옵션'], function(opt_name, opt_list) {
@@ -174,12 +197,12 @@
                 
                 var li = '';
                 var orders = data;
-                $.each(orders, function(key, value) {
+                $.each(orders, function(key, coffee) {
                     li += '<li class="list-group-item" name="' + key + '"><div class="list-group-item-container">' + 
-                        '<img class="list-group-item-img" src="' + value['이미지'] +'"/>' +
+                        '<img class="list-group-item-img" src="' + '/static/' + coffee["이미지"] +'"/>' +
                         '<div class="list-group-item-overlay"><p class="list-group-item-overlay-text">삭제</p></div></div>' +
-                        '<details><summary>' + value["이름"] + '(' + value['주문자'] + ')</summary>' + 
-                            '<p class="list-group-item-option">' + JSON.stringify(value['옵션']) + '</p></details></li>'
+                        '<details><summary>' + coffee["이름"] + '(' + coffee['주문자'] + ')</summary>' + 
+                            '<p class="list-group-item-option">' + JSON.stringify(coffee['옵션']) + '</p></details></li>'
                 });
                 $('#coffee-orders').html(li);
                 $('.list-group-item-container').click(function(){
@@ -207,7 +230,7 @@
                 get_orders();
             }
 
-            set_data('add_order', JSON.stringify(coffee), success)
+            set_data('add_order', coffee, success)
         }
 
         // 커피 주문 취소하기
@@ -259,4 +282,4 @@
             });    
         });
     </script>
-</asp:Content>
+</body>
