@@ -37,7 +37,7 @@ body {
     
 }
 
-.coffee-list {
+.coffee-menu-list {
     display: flex;
     flex-wrap: wrap;
 }
@@ -55,6 +55,7 @@ body {
     
     background-color: #EEEEEE;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .coffee-box > img {
