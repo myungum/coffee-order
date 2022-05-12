@@ -1,7 +1,6 @@
 from flask import Flask, render_template, jsonify, request, session
 import json
-import time
-import datetime
+import threading
 
 app = Flask(__name__)
 app.secret_key = b'aszg19kl@'
@@ -21,6 +20,27 @@ def get_fail_json(msg):
 
 def get_success_json(data):
     return json.dumps({'result': 'success', 'data': data})
+
+
+def get_order_str():
+    result = ''
+    orders_by_coffee_name = dict()
+    for order in orders.values():
+        options = ''
+        for option in order['옵션'].values():
+            options += ('/' if len(options) > 0 else '') + option
+        if order['이름'] not in orders_by_coffee_name:
+            orders_by_coffee_name[order['이름']] = dict()
+
+        if options not in orders_by_coffee_name[order['이름']]:
+            orders_by_coffee_name[order['이름']][options] = 0
+        orders_by_coffee_name[order['이름']][options] += 1
+
+    for coffee_name, orders_by_options in orders_by_coffee_name.items():
+        for options, count in orders_by_options.items():
+            result += coffee_name + ' ' + str(count) + '개 ' + options + '\n'
+
+    return result
 
 
 @app.route('/ajax/get_data', methods=['POST'])
@@ -67,9 +87,28 @@ def set_data():
         return get_fail_json('unknown cmd')
 
 
+class Worker(threading.Thread):
+    def __init__(self, _app, _ip, _port):
+        super().__init__()
+        self.app = _app
+        self.ip = _ip
+        self.port = _port
+
+    def run(self):
+        app.run(host=self.ip, port=self.port)
+
+
 if __name__ == '__main__':
     with open('coffee.json', encoding='utf-8') as json_file:
         coffees = json.load(json_file)
     order_id = 1
-    app.run(host='0.0.0.0', port='80')
+    worker = Worker(app, '0.0.0.0', '80')
+    worker.start()
+
+    while True:
+        cmd = input()
+        if cmd == 'print':
+            print(get_order_str())
+        else:
+            print('unknown command')
 
