@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request, session
 import json
 import threading
+import clipboard
 
 app = Flask(__name__)
 app.secret_key = b'aszg19kl@'
@@ -22,7 +23,7 @@ def get_success_json(data):
     return json.dumps({'result': 'success', 'data': data})
 
 
-def get_order_str():
+def get_orders_str():
     result = ''
     orders_by_coffee_name = dict()
     for order in orders.values():
@@ -56,6 +57,8 @@ def get_data():
         if 'name' in session:
             return get_success_json(session['name'])
         return get_success_json('')
+    elif req['cmd'] == 'get_orders_str':
+        return get_success_json(get_orders_str())
     else:
         return get_fail_json('unknown cmd')
 
@@ -106,9 +109,14 @@ if __name__ == '__main__':
     worker.start()
 
     while True:
-        cmd = input()
-        if cmd == 'print':
-            print(get_order_str())
+        cmd = input().split()
+        if cmd[0] == 'print':
+            print(get_orders_str())
+        elif cmd[0] == 'copy':
+            clipboard.copy(get_orders_str())
+        elif cmd[0] == 'export':
+            with open(cmd[1] if len(cmd) > 1 else 'output.txt', 'w', encoding='utf-8') as file:
+                file.write(get_orders_str())
         else:
             print('unknown command')
 

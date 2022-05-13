@@ -40,9 +40,13 @@
             </div>
 
             <!--주문 리스트-->
-            <ul id="coffee-orders" class="list-group">
-
-            </ul>
+            <div id="coffee-order">
+                <input type="button" value="복사" id="coffee-order-copy"/>
+                <ul id="coffee-order-list" class="list-group">
+                
+                </ul>
+            </div>
+            
         </div>
 
         <!--커피 템플릿-->
@@ -221,11 +225,11 @@
                         '<details><summary>' + coffee["이름"] + '(' + coffee['주문자'] + ')</summary>' + 
                             '<p class="list-group-item-option">' + JSON.stringify(coffee['옵션']) + '</p></details></li>'
                 });
-                $('#coffee-orders').html(li);
+                $('#coffee-order-list').html(li);
                 $('.list-group-item-container').click(function(){
                     remove_order($(this).parent().attr('name'));
                 });
-                coffee_orders = Sortable.create(document.getElementById('coffee-orders'), {
+                coffee_orders = Sortable.create(document.getElementById('coffee-order-list'), {
                     sort : false,
                     });
             }
@@ -277,7 +281,7 @@
                     }
                 }
                 else {
-                    split = Split(['#coffee-menu', '#coffee-orders'], {
+                    split = Split(['#coffee-menu', '#coffee-order'], {
                         minSize: 240,
                     });
 
@@ -318,6 +322,33 @@
                         }
                         console.log('keyword : ' + keyword);
 
+                    });
+
+                    // 주문 복사
+                    $('#coffee-order-copy').click(function() {
+                        get_data("get_orders_str", function(data) {
+                            // clipboard api 가 가능한 경우. source : https://www.delftstack.com/ko/howto/javascript/javascript-copy-to-clipboard/
+                            if (navigator.clipboard) {
+                                navigator.clipboard.writeText(data)
+                                    .then(() => {
+                                        alert('copy success');
+                                })
+                                    .catch(err => {
+                                        alert('copy fail');
+                                })
+                            }
+                            // execCommand. source : https://velog.io/@godori/js-clipboard-copy
+                            else {
+                                var tempElem = document.createElement('textarea');
+                                tempElem.value = data;  
+                                document.body.appendChild(tempElem);
+
+                                tempElem.select();
+                                document.execCommand("copy");
+                                document.body.removeChild(tempElem);
+                                alert('copy success');
+                            }
+                        });
                     });
                 }
             });    
