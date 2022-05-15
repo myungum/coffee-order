@@ -65,9 +65,9 @@
         <div class="coffee-option">
             <div class="coffee-option-box">
                 <div class="coffee-option-top">
-                    <img class="coffee-option-img" src=""/>
+                    <img class="coffee-option-img" id="coffee-option-img" src=""/>
                 </div>
-                <ul class="coffee-option-list">
+                <ul class="coffee-option-list" id="coffee-option-list">
                     <li>
                         <span>종류</span>
                         <div class="switch-field" id="타입">
@@ -206,12 +206,18 @@
                         popup_open();
 
                         var coffee = coffee_dic[$(this).parent().attr('id')];
-                        $('.coffee-option-img').attr('src', '/static/' + coffee["이미지"]);
+                        $('#coffee-option-img').attr('src', '/static/' + coffee["이미지"]);
                         
+                        $('#coffee-option-list').html('');
                         // 옵션 설정하기
+                        var opt_str = '';
                         $.each(coffee['옵션'], function(opt_name, opt_list) {
-                            $('#' + opt_name).html(make_radio_button(opt_name, opt_list));
+                            opt_str += '<li><span>' + opt_name + '</span>' + 
+                                '<div class="switch-field">' + 
+                                    make_radio_button(opt_name, opt_list) + 
+                                '</div></li>';
                         });
+                        $('#coffee-option-list').html(opt_str);
                         coffee_current = coffee;
                     });
                 }
