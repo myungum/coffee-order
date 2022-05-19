@@ -66,6 +66,10 @@
             <div class="coffee-option-box">
                 <div class="coffee-option-top">
                     <img class="coffee-option-img" id="coffee-option-img" src=""/>
+                    
+                </div>
+                <div class="coffee-option-middle">
+                    <span id="coffee-option-coffee-name">커피 이름</span>
                 </div>
                 <ul class="coffee-option-list" id="coffee-option-list">
                     <li>
@@ -218,6 +222,7 @@
                                 '</div></li>';
                         });
                         $('#coffee-option-list').html(opt_str);
+                        $('#coffee-option-coffee-name').text(coffee['이름']);
                         coffee_current = coffee;
                     });
                 }
