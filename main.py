@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request, session
 import json
 import threading
 import clipboard
+import ctypes
 
 app = Flask(__name__)
 app.secret_key = b'aszg19kl@'
@@ -100,23 +101,51 @@ class Worker(threading.Thread):
     def run(self):
         app.run(host=self.ip, port=self.port)
 
+    def get_id(self):
+        # returns id of the respective thread
+        if hasattr(self, '_thread_id'):
+            return self._thread_id
+        for id, thread in threading._active.items():
+            if thread is self:
+                return id
+
+    def raise_exception(self):
+        thread_id = self.get_id()
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+              ctypes.py_object(SystemExit))
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print('Exception raise failure')
+
 
 if __name__ == '__main__':
-    with open('coffee.json', encoding='utf-8') as json_file:
-        coffees = json.load(json_file)
-    order_id = 1
-    worker = Worker(app, '0.0.0.0', '80')
-    worker.start()
+    abort = False
+    while not abort:
+        with open('coffee.json', encoding='utf-8') as json_file:
+            coffees = json.load(json_file)
+        order_id = 1
+        worker = Worker(app, '0.0.0.0', '80')
+        worker.start()
 
-    while True:
-        cmd = input().split()
-        if cmd[0] == 'print':
-            print(get_orders_str())
-        elif cmd[0] == 'copy':
-            clipboard.copy(get_orders_str())
-        elif cmd[0] == 'export':
-            with open(cmd[1] if len(cmd) > 1 else 'output.txt', 'w', encoding='utf-8') as file:
-                file.write(get_orders_str())
-        else:
-            print('unknown command')
+        while True:
+            cmd = input().split()
+            if cmd[0] == 'print':
+                print(get_orders_str())
+            elif cmd[0] == 'copy':
+                clipboard.copy(get_orders_str())
+            elif cmd[0] == 'export':
+                with open(cmd[1] if len(cmd) > 1 else 'output.txt', 'w', encoding='utf-8') as file:
+                    file.write(get_orders_str())
+            # thread abort : https://pythondocs.net/%ED%8C%8C%EC%9D%B4%EC%8D%AC%EA%B8%B0%EC%B4%88/%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%93%B0%EB%A0%88%EB%93%9Cthread%EB%A5%BC-%EC%A4%91%EA%B0%84%EC%97%90-%EC%A4%91%EB%8B%A8kill-terminate%EC%8B%9C%ED%82%A4%EB%8A%94%EB%B2%95/
+            elif cmd[0] == 'exit' or cmd[0] == 'stop':
+                worker.raise_exception()
+                worker.join()
+                abort = True
+                break
+            elif cmd[0] == 'reboot' or cmd[0] == 'restart':
+                worker.raise_exception()
+                worker.join()
+                break
+            else:
+                print('unknown command')
 
