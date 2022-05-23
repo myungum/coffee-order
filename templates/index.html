@@ -46,6 +46,8 @@
             <div id="coffee-order">
                 <input type="button" value="주문복사" id="coffee-order-copy">
                 <input type="button" value="새로고침" id="coffee-order-refresh">
+                <input type="button" value="초기화" id="coffee-order-clear">
+                
                 <ul id="coffee-order-list" class="list-group">
                 
                 </ul>
@@ -281,6 +283,15 @@
             set_data('remove_order', id, success);
         }
 
+        // 커피 주문 목록 초기화하기
+        function clear_order() {
+            var success = function () {
+                get_orders();
+            }
+
+            set_data('clear_order', '', success);
+        }
+
         // 문서 준비 완료
         $(document).ready(function() {
             /* 이름 확인하기 */
@@ -373,6 +384,13 @@
                     // 주문 새로고침
                     $('#coffee-order-refresh').click(function() {
                         get_orders();
+                    });
+
+                    // 주문 초기화
+                    $('#coffee-order-clear').click(function() {
+                        if (confirm("정말 초기화하시겠습니까?")) {
+                            clear_order();
+                        }
                     });
                 }
             });    

@@ -87,6 +87,9 @@ def set_data():
     elif req['cmd'] == 'set_name':
         session['name'] = req['data']
         return get_success_json('set name success')
+    elif req['cmd'] == 'clear_order':
+        orders.clear()
+        return get_success_json('clear order success')
     else:
         return get_fail_json('unknown cmd')
 
@@ -145,6 +148,9 @@ if __name__ == '__main__':
             elif cmd[0] == 'reboot' or cmd[0] == 'restart':
                 worker.raise_exception()
                 worker.join()
+                break
+            elif cmd[0] == 'clear':
+                orders.clear()
                 break
             else:
                 print('unknown command')
